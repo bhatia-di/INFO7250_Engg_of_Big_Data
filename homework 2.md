@@ -6,8 +6,7 @@ Solution:
 
 1. Changed directory to =>  C:\Program Files\MongoDB\Server\5.0\bin
 2. Open Git Bash
-3. executed command => bash D:/info7250/hw2/importNSYEData.sh
-  
+3. executed command => bash D:/info7250/hw2/importNSYEData.sh  
 4. ** close any working mongo sessions 
 
 ```
@@ -17,11 +16,23 @@ Solution:
   do
 	 FILELOC="D:/info7250/hw2/nsye/nyse/NYSE/NYSE_daily_prices_$dataFileSuffix.csv"
 	 echo $FILELOC
-	 mongoimport --db=hw2 --collection=nsye_stock_data_attempt --type=csv --file=$FILELOC --headerline
+	 mongoimport --db=homework2 --collection=nsye_stock_data --type=csv --file=$FILELOC --headerline
 
   done  
- 
+
   
   
 ```
 ![image](https://user-images.githubusercontent.com/90657593/172733153-4167c178-3e31-4959-841c-2f1b9fe584db.png)
+
+5. Checking count of uploaded documents
+```
+ > use homework2;
+switched to db homework2
+> show collections
+nsye_stock_data
+> db.nsye_stock_data.count()
+9211031
+
+```
+

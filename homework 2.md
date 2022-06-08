@@ -36,3 +36,24 @@ nsye_stock_data
 
 ```
 
+
+PART 3.1 - PROGRAMMING ASSIGNMENT
+Use the NYSE database to find the average price of stock_price_high values for each stock using MapReduce.
+
+```
+ var mapper_average_stock_price_high = function () {
+	emit(this.stock_symbol, this.stock_price_high);
+ }
+ 
+ var reducer_average_stock_price_high = function(stock_symbol, stock_price_high_arr) {
+   return Array.avg(stock_price_high_arr);
+};
+
+db.nsye_stock_data.mapReduce(mapper_average_stock_price_high, reducer_average_stock_price_high, {
+out: average_stock_price_high_mapreduce
+});
+
+```
+
+
+

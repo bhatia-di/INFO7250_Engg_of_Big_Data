@@ -91,6 +91,36 @@ PART 3.2. Part 3.1 result will not be correct as AVERAGE is a commutative operat
 (Hint: pass sum and count from the reducer)
 (https://docs.mongodb.com/manual/reference/method/db.collection.mapReduce/index.html)
 
+```
+var mapper_average_stock_price_high_w_finalizer = function () {
+	emit(this.stock_symbol, {stock_price: this.stock_price_high, count: 1});
+ }
+ 
+ var reducer_average_stock_price_high_w_finalizer = function(stock_symbol, stock_price_high_arr) {
+ var result = {sum: 0, count: 0};
+ 
+ for (var i =0; i<stock_price_high_arr.length;i++) {
+ 		result.sum += stock_price_high_arr[i].stock_price;
+ 		result.count += stock_price_high_arr[i].count;
+ 
+ }
+ return result;
+ 
+};
+var final_average_stock_price_high = function(stock_symbol, result) {
+	result.avg_stock_high = result.sum / result.count;
+	return result;
+
+}
+
+db.nsye_stock_data.mapReduce(mapper_average_stock_price_high_w_finalizer, reducer_average_stock_price_high_w_finalizer, {
+out: "average_stock_price_high_w_finalizer",
+finalize: final_average_stock_price_high
+});
+
+
+```
+
 
 
 

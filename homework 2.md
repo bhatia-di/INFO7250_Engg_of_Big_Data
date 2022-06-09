@@ -93,33 +93,38 @@ PART 3.2. Part 3.1 result will not be correct as AVERAGE is a commutative operat
 
 ```
 var mapper_average_stock_price_high_w_finalizer = function () {
-	emit(this.stock_symbol, {stock_price: this.stock_price_high, count: 1});
+	emit(this.stock_symbol, {stock_price_sum: this.stock_price_high, count: 1});
  }
  
  var reducer_average_stock_price_high_w_finalizer = function(stock_symbol, stock_price_high_arr) {
- var result = {sum: 0, count: 0};
+ var result = {stock_price_sum: 0, count: 0};
  
- for (var i =0; i<stock_price_high_arr.length;i++) {
- 		result.sum += stock_price_high_arr[i].stock_price;
- 		result.count += stock_price_high_arr[i].count;
- 
+ for (var i =0; i<stock_price_high_arr.length; i++) 
+ { 
+ result.count += stock_price_high_arr[i].count;
+ result.stock_price_sum += stock_price_high_arr[i].stock_price_sum; 
  }
  return result;
  
 };
 var final_average_stock_price_high = function(stock_symbol, result) {
-	result.avg_stock_high = result.sum / result.count;
+	result.avg_stock_high = result.stock_price_sum / result.count;
 	return result;
-
 }
 
 db.nsye_stock_data.mapReduce(mapper_average_stock_price_high_w_finalizer, reducer_average_stock_price_high_w_finalizer, {
-out: "average_stock_price_high_w_finalizer",
+out: "average_stock_price_high_w_finalizer_1",
 finalize: final_average_stock_price_high
 });
 
 
+
+
 ```
+
+Ouput of the following code:
+![Screenshot (17)](https://user-images.githubusercontent.com/90657593/172740415-33f3cca6-47fa-4ae2-833a-0634f9f3e6f7.png)
+
 
 
 

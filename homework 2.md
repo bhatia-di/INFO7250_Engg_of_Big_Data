@@ -125,6 +125,12 @@ finalize: final_average_stock_price_high
 Ouput of the following code:
 ![Screenshot (17)](https://user-images.githubusercontent.com/90657593/172740415-33f3cca6-47fa-4ae2-833a-0634f9f3e6f7.png)
 
+PART 4. Calculate the average stock price of each price of all stocks using $avg aggregation.
+```
+	db.nsye_stock_data.aggregate([
+		{ $group: { _id: "$stock_symbol", averageStockPrice: { $avg: "$stock_price_high" } } }
+	]);
+```
 
 
 

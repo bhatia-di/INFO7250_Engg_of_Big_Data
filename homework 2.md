@@ -185,7 +185,7 @@ var mapper_movies_per_year = function () {
 	var titleStr = this.title;
 	var titleStrLen = titleStr.length;
 	var year = this.title.substring(titleStrLen-5, titleStrLen-1);
-	emit(year, this.movieId);
+	emit(this.title, this.movieId);
  };
  
  var reducer_movies_per_year = function(year, movieId_arr) {
@@ -199,7 +199,77 @@ out: "movie_count_per_year"
 
 
 ```
+3. Find the number of Movies per rating using MapReduce
+```
+var mapper_movies_per_rating = function () {
+	
+	emit(this.Rating, this.MovieID);
+ };
+ 
+ var reducer_movies_per_rating = function(year, movieId_arr) {
+   return movieId_arr.length;
+};
 
+db.ratings.mapReduce(mapper_movies_per_rating, reducer_movies_per_rating, {
+out: "movie_count_per_rating"
+});
+
+
+
+```
+
+Result of the collection
+![Screenshot (21)](https://user-images.githubusercontent.com/90657593/172750332-e8c75a9f-5138-4624-82c7-6cb4c8da1b5b.png)
+
+```
+Verifying the result with count
+> db.movie_count_per_rating.find()
+{ "_id" : 1, "value" : 60796 }
+{ "_id" : 4, "value" : 379508 }
+{ "_id" : 3, "value" : 283748 }
+{ "_id" : 5, "value" : 247312 }
+{ "_id" : 2, "value" : 116845 }
+> db.ratings.find({"Rating": 1}).count();
+60796
+```
+
+PART 5.2 - PROGRAMMING ASSIGNMENT
+  Repeat 5.1 using Aggregation Pipeline.
+  
+  Part 5.2.1 Find the number Females and Males from the users collection
+  ```
+  	db.users.aggregate([
+	{ $group: { _id: "$Gender", countbyGender: {$count: {}} } }	
+	]);
+  ```
+
+Result:
+![Screenshot (22)](https://user-images.githubusercontent.com/90657593/172751817-d95fc08f-571a-4da8-878b-32082d8bfbc4.png)
+
+Part 5.2.2 Find the number of Movies per year
+  ```
+  db.movies.aggregate([
+  {
+    $group: {
+      _id: {
+         { $split: [ "$title", " " ] },
+      },
+      value: { $sum: 1 }
+    }
+  }
+])
+  
+  
+  ```
+  
+  Part 5.3.3 Find the number of Movies per rating 
+  ```
+  db.ratings.aggregate(
+  	{ $group: { _id: "$Rating", countbyRatings: {$count: {}} } }	
+  );
+  
+  ```
+  ![Screenshot (23)](https://user-images.githubusercontent.com/90657593/172753832-b87b50ba-9fd0-4415-8eac-98d6a52db388.png)
 
 
 

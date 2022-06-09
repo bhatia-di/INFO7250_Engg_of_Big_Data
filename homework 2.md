@@ -150,6 +150,56 @@ mongoimport --db=homework2 --collection=movies --type=csv --file="D:/info7250/hw
 
 
 ```
+![Screenshot (19)](https://user-images.githubusercontent.com/90657593/172745107-e7b90702-6bc2-4efb-8899-4a7157961885.png)
+
+
+1. Find the number Females and Males from the users collection using MapReduce. Do the same thing using count() to compare the results.
+
+```
+#Using count method
+
+> db.users.find({"Gender": "F"}).count();
+1709
+> db.users.find({"Gender": "M"}).count();
+4331
+>
+# Using map reduce
+var mapper_gender = function () {
+	emit(this.Gender, this.UserID);
+ };
+ 
+ var reducer_count_per_gender = function(gender, userId_arr) {
+   return userId_arr.length;
+};
+
+db.users.mapReduce(mapper_gender, reducer_count_per_gender, {
+out: "user_count_per_gender"
+});
+```
+Result matches with count:
+![Screenshot (20)](https://user-images.githubusercontent.com/90657593/172746638-a20eb649-6e27-477a-b06a-2a3118089e07.png)
+
+2. Find the number of Movies per year using MapReduce
+```
+var mapper_movies_per_year = function () {
+	var titleStr = this.title;
+	var titleStrLen = titleStr.length;
+	var year = this.title.substring(titleStrLen-5, titleStrLen-1);
+	emit(year, this.movieId);
+ };
+ 
+ var reducer_movies_per_year = function(year, movieId_arr) {
+   return movieId_arr.length;
+};
+
+db.movies.mapReduce(mapper_movies_per_year, reducer_movies_per_year, {
+out: "movie_count_per_year"
+});
+
+
+
+```
+
 
 
 

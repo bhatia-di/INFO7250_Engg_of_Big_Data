@@ -132,6 +132,24 @@ PART 4. Calculate the average stock price of each price of all stocks using $avg
 	]);
 ```
 
+![Screenshot (18)](https://user-images.githubusercontent.com/90657593/172741645-f3dab7e0-9ea6-4beb-9453-6f0318b56899.png)
+
+PART 5.1 - PROGRAMMING ASSIGNMENT
+Import the Movielens dataset into MongoDB. Refer to README about file contents and headings.
+https://grouplens.org/datasets/movielens/1m/ (Links to an external site.) (Links to an external site.)   [you may replace :: in the dateset with comma or tab to import]
+
+
+1. Importing all csv to collections
+2. replaced :: with ,
+3. added headerline
+4. executed below commands
+```
+mongoimport --db=homework2 --collection=users --type=csv --file="D:/info7250/hw2/ml-1m/ml-1m/users.csv" --headerline
+mongoimport --db=homework2 --collection=ratings --type=csv --file="D:/info7250/hw2/ml-1m/ml-1m/ratings.csv" --headerline
+mongoimport --db=homework2 --collection=movies --type=csv --file="D:/info7250/hw2/ml-1m/ml-1m/movies.csv" --headerline
+
+
+```
 
 
 

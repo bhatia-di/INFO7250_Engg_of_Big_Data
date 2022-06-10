@@ -271,6 +271,99 @@ Part 5.2.2 Find the number of Movies per year
   ```
   ![Screenshot (23)](https://user-images.githubusercontent.com/90657593/172753832-b87b50ba-9fd0-4415-8eac-98d6a52db388.png)
 
+PART 6 - PROGRAMMING ASSIGNMENT 
+
+Java Code to Import data into Mongo db
+```
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+
+import javax.print.Doc;
+
+
+public class MongoConnectMain {
+
+
+    public static List<Document> readLogFileAndDocument() throws FileNotFoundException {
+        List<Document> documentList = new ArrayList<>();
+        File file = new File("D:\\Companies\\MongoConnect\\src\\main\\resources\\access.log");
+
+        Scanner sc = new Scanner(file);
+        sc.useDelimiter("\n");
+        System.out.println(sc.next());
+        while(sc.hasNext()){
+            String srcString = sc.next();
+            String[] srcArr = srcString.split(" ");
+            String ipAddr = srcArr[0];
+
+            String timeStamp = srcArr[3].replaceAll("\\[", "").replaceAll("\\]", "");
+            String website = srcArr[6];
+            System.out.println(ipAddr);
+            System.out.println(timeStamp);
+            System.out.println(website);
+
+            Document newDoc = new Document();
+            newDoc.append("ipAddress", ipAddr);
+            newDoc.append("timeStamp", timeStamp);
+            newDoc.append("website", website);
+            System.out.println(newDoc);
+
+            documentList.add(newDoc);
+
+        }
+        // closing the scanner stream
+        sc.close();
+        return documentList;
+    }
+
+    
+    public static void main(String[] args) throws FileNotFoundException, UnknownHostException {
+        MongoClient mongo = MongoClients.create();
+        MongoDatabase db = mongo.getDatabase("homework2");
+        MongoCollection<Document> accessCollection = db.getCollection("access");
+
+        // it ll add data to access collection only if the count is 0
+        if (accessCollection.countDocuments() == 0) {
+            List<Document> listOfDoc = readLogFileAndDocument();
+            accessCollection.insertMany(listOfDoc);
+            System.out.println("Document counts " + accessCollection.countDocuments());
+
+        }
+
+    }
+}
+
+```
+
+- Number of times any webpage was visited by the same IP address.
+```
+db.access.aggregate(
+  	{ $group: { _id: "$website"}},
+	{$group: {_id: "$ipAddress", countbyIp: {$count: {}}}}
+	
+  );
+  
+
+
+
+
+```
+
+
+- Number of times any webpage was visited each month.
+
+
+
 
 
 

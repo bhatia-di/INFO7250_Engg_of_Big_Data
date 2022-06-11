@@ -347,25 +347,169 @@ public class MongoConnectMain {
 
 - Number of times any webpage was visited by the same IP address.
 ```
-db.access.aggregate(
-  	{ $group: { _id: "$website"}},
-	{$group: {_id: "$ipAddress", countbyIp: {$count: {}}}}
-	
-  );
+import com.mongodb.Block;
+import com.mongodb.client.*;
+import org.bson.Document;
+
+public class WebsitePerIpAddr implements Block<Document> {
+
+    public static void main(String[] args) {
+        MongoClient mongo = MongoClients.create();
+        MongoDatabase db = mongo.getDatabase("homework2");
+        MongoCollection<Document> accessCollection = db.getCollection("access");
+        // Define the map function
+        String map = "function(){"
+                + "emit(this.ipAddress," + "{\"visitCount\":1});"
+                + "}";
+
+        // Define the reduce function
+        String reduce = "function(key,values){"
+                + "var result = {\"visitCount\": 0};"
+                + "values.forEach("
+                + "function(value){"
+                +"result.visitCount += value.visitCount;"
+                + "});"
+                +" return result;"
+                + "}";
+
+        // Execute map reduce
+        MapReduceIterable<Document> mapreduceResult = accessCollection.mapReduce(map,reduce);
+
+        // Print the map reduce result
+        for(Document doc:mapreduceResult) {
+            System.out.println(doc.toJson());
+        }
+
+        // Close the connection
+        mongo.close();
+
+
+    }
+
+    public void apply(Document document) {
+        System.out.println(document.toJson());
+    }
+
+}
   
 
 
 
 
 ```
+![Screenshot (25)](https://user-images.githubusercontent.com/90657593/173165156-fa584417-ec5e-4924-8424-e29046ac96c5.png)
+
 
 
 - Number of times any webpage was visited each month.
+```
+db.access.find().forEach(
+	function(entity,i){
+		entity.month = entity.timeStamp.toString().substr(3,3);
+		db.access.save(entity);
+});
+
+
+import com.mongodb.Block;
+import com.mongodb.client.*;
+import org.bson.Document;
+
+public class WebsitePerYear implements Block<Document> {
+
+    public static void main(String[] args) {
+        MongoClient mongo = MongoClients.create();
+        MongoDatabase db = mongo.getDatabase("homework2");
+        MongoCollection<Document> accessCollection = db.getCollection("access");
+        // Define the map function
+        String map = "function(){"
+                + "emit(this.month," + "{\"visitCount\":1});"
+                + "}";
+
+        // Define the reduce function
+        String reduce = "function(key,values){"
+                + "var result = {\"visitCount\": 0};"
+                + "values.forEach("
+                + "function(value){"
+                +"result.visitCount += value.visitCount;"
+                + "});"
+                +" return result;"
+                + "}";
+
+        // Execute map reduce
+        MapReduceIterable<Document> mapreduceResult = accessCollection.mapReduce(map,reduce);
+
+        // Print the map reduce result
+        for(Document doc:mapreduceResult) {
+            System.out.println(doc.toJson());
+        }
+
+        // Close the connection
+        mongo.close();
+
+
+    }
+
+    public void apply(Document document) {
+        System.out.println(document.toJson());
+    }
+
+}
 
 
 
 
+```
+![Screenshot (24)](https://user-images.githubusercontent.com/90657593/173165116-07b45198-aec0-4637-ad58-f5fbd3442242.png)
 
 
+Using map-reduce
+```
+import com.mongodb.Block;
+import com.mongodb.client.*;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Sorts;
+import org.bson.Document;
+
+import com.mongodb.Block;
+        import com.mongodb.client.*;
+        import org.bson.Document;
+
+import java.util.Arrays;
+import java.util.function.Consumer;
+
+public class WebsitePerIpAddrAgg implements Block<Document> {
+
+    public static void main(String[] args) {
+        MongoClient mongo = MongoClients.create();
+        MongoDatabase db = mongo.getDatabase("homework2");
+        MongoCollection<Document> accessCollection = db.getCollection("access");
+        // Define the map function
+        Block<Document> printBlockDoc = new WebsitePerIpAddrAgg();
+        accessCollection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("ipAddress",Accumulators.sum("visitCount", 1)),
+                        Aggregates.sort(Sorts.descending("visitCount"))
+                )
+        ).forEach(printBlock);
+
+        accessCollection.aggregate(
+                Arrays.asList(
+                        Aggregates.group("$month", Accumulators.sum("visitCount", 1)),
+                        Aggregates.sort(Sorts.descending("visitCount"))
+                )
+        ).forEach(printBlockDoc);
+
+        mongo.close();
+
+
+    }
+
+    public void apply(Document document) {
+        System.out.println(document.toJson());
+    }
+
+}
+```
 
 

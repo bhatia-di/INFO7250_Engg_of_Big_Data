@@ -1,0 +1,27 @@
+PART 6. Programming Assignment
+
+All hadoop commands are invoked by the bin/hadoop script. Running the hadoop script without any arguments prints the description for all commands.
+Usage: hadoop [--config confdir] [--loglevel loglevel] [COMMAND] [GENERIC_OPTIONS] [COMMAND_OPTIONS] Execute each hadoop command once, and place the 
+screenshots into a word file. If a command cannot be executed for any reason (such as, a distributed environment is needed), you may write the definition
+of the command, and skip execution. http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/FileSystemShell.html
+
+=> Commands:
+
+Start Hadoop
+-  cd /usr/local/bin/hadoop-2.7.3/sbin
+- ./start-all.sh
+-  cd /usr/local/bin/hadoop-2.7.3/bin
+
+1. appendToFile
+
+-  cd /usr/local/bin/hadoop-2.7.3/bin
+-  ./hadoop fs -appendToFile /Users/dikshabhatia/Desktop/info/a3/example.docx /Users/dikshabhatia/Desktop/info/a3/test.docx 
+
+  
+  
+  
+  
+  
+
+
+
